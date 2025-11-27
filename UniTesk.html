@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <title>UniTasks Web - Demo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: Arial, sans-serif;
+      background: #f2f4f8;
+      color: #222;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      min-height: 100vh;
+      padding: 24px;
+    }
+    .app-container {
+      width: 100%;
+      max-width: 960px;
+      background: #ffffff;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+      padding: 24px 24px 32px;
+    }
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+      border-bottom: 1px solid #ddd;
+      padding-bottom: 12px;
+    }
+    header h1 {
+      font-size: 20px;
+    }
+    header small {
+      color: #666;
+    }
+    button {
+      border: none;
+      border-radius: 6px;
+      padding: 8px 14px;
+      cursor: pointer;
+      font-size: 14px;
+    }
+    .btn-primary {
+      background: #2563eb;
+      color: #fff;
+    }
+    .btn-secondary {
+      background: #e5e7eb;
+      color: #111827;
+    }
+    .btn-danger {
+      background: #dc2626;
+      color: #fff;
+    }
+    .btn-link {
+      background: transparent;
+      color: #2563eb;
+      padding: 0;
+    }
+    .card {
+      background: #ffffff;
+      border-radius: 10px;
+      padding: 20px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+      margin-top: 16px;
+    }
+    .login-container {
+      max-width: 420px;
+      margin: 0 auto;
+      margin-top: 24px;
+    }
+    .field {
+      margin-bottom: 12px;
+    }
+    label {
+      display: block;
+      font-size: 14px;
+      margin-bottom: 4px;
+      color: #374151;
+    }
+    input, select {
+      width: 100%;
+      padding: 8px 10px;
+      border-radius: 6px;
+      border: 1px solid #d1d5db;
+      font-size: 14px;
+    }
+    input:focus, select:focus {
+      outline: none;
+      border-color: #2563eb;
+      box-shadow: 0 0 0 1px #2563eb33;
+    }
+    .row {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    .row > .field {
+      flex: 1;
+      min-width: 140px;
+    }
+    .message {
+      margin-bottom: 12px;
+      border-radius: 6px;
+      padding: 8px 12px;
+      font-size: 14px;
+    }
+    .message-success {
+      background: #ecfdf3;
+      color: #166534;
+      border: 1px solid #bbf7d0;
+    }
+    .message-error {
+      background: #fef2f2;
+      color: #b91c1c;
+      border: 1px solid #fecaca;
+    }
+    .toolbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    .toolbar-left, .toolbar-right {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 8px;
+      font-size: 14px;
+    }
+    th, td {
+      padding: 8px 6px;
+      border-bottom: 1px solid #e5e7eb;
+      text-align: left;
+      vertical-align: middle;
+    }
+    th {
+      background: #f3f4f6;
+      font-weight: 600;
+    }
+    .badge {
+      display: inline-block;
+      padding: 2px 6px;
+      border-radius: 999px;
+      font-size: 11px;
+    }
+    .badge-pendente {
+      background: #fee2e2;
+      color: #b91c1c;
+    }
+    .badge-concluida {
+      background: #dcfce7;
+      color: #166534;
+    }
+    .task-concluida {
+      text-decoration: line-through;
+      color: #6b7280;
+    }
+    .mt-8 { margin-top: 8px; }
+    .mt-16 { margin-top: 16px; }
+    .hidden { display: none; }
+    .text-right { text-align: right; }
+    .text-sm { font-size: 13px; color: #6b7280; }
+    .mobile-warning {
+      margin-top: 10px;
+      font-size: 12px;
+      color: #9ca3af;
+    }
+    @media (max-width: 600px) {
+      .app-container {
+        padding: 16px;
+      }
+      header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 4px;
+      }
+      table {
+        font-size: 12px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="app-container">
+    <header>
+      <div>
+        <h1>UniTasks Web <small style="font-weight: normal; color:#6b7280;">(Demo para prints)</small></h1>
+        <small id="userInfo" class="hidden">Logado como: <span id="userEmail"></span></small>
+      </div>
+      <div>
+        <button id="logoutBtn" class="btn-secondary hidden">Sair</button>
+      </div>
+    </header>
+
+    <!-- LOGIN -->
+    <div id="loginView" class="login-container">
+      <div class="card">
+        <h2 style="margin-bottom: 10px; font-size: 18px;">Login</h2>
+        <p class="text-sm" style="margin-bottom: 10px;">
+          Use <strong>aluno@uni.br</strong> / <strong>123456</strong> para login válido
+        </p>
+        <div id="loginMessage" class="message message-error hidden"></div>
+        <div class="field">
+          <label for="email">E-mail</label>
+          <input type="email" id="email" placeholder="ex: aluno@uni.br" />
+        </div>
+        <div class="field">
+          <label for="password">Senha</label>
+          <input type="password" id="password" placeholder="********" />
+        </div>
+        <button id="loginBtn" class="btn-primary" style="margin-top: 8px;">Entrar</button>
+      </div>
+    </div>
+
+    <!-- TAREFAS -->
+    <div id="tasksView" class="hidden">
+      <div id="globalMessage" class="message hidden"></div>
+      <div class="card">
+        <div class="toolbar">
+          <div class="toolbar-left">
+            <button id="newTaskBtn" class="btn-primary">Nova tarefa</button>
+            <button id="simulateErrorBtn" class="btn-secondary">Simular erro de mensagem</button>
+          </div>
+          <div class="toolbar-right">
+            <div class="field" style="min-width:160px;">
+              <label for="filterStatus">Filtro por status</label>
+              <select id="filterStatus">
+                <option value="todas">Todas</option>
+                <option value="pendente">Somente pendentes</option>
+                <option value="concluida">Somente concluídas</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- Formulário de tarefa -->
+        <div id="taskForm" class="card" style="background:#f9fafb; margin-top: 8px;">
+          <h3 style="margin-bottom: 8px; font-size: 16px;">Nova tarefa</h3>
+          <div id="taskFormMessage" class="message message-error hidden"></div>
+          <div class="row">
+            <div class="field">
+              <label for="taskTitle">Título *</label>
+              <input type="text" id="taskTitle" placeholder="Ex.: Estudar Qualidade de Software" />
+            </div>
+            <div class="field">
+              <label for="taskDueDate">Data de vencimento *</label>
+              <input type="date" id="taskDueDate" />
+            </div>
+            <div class="field">
+              <label for="taskPriority">Prioridade</label>
+              <select id="taskPriority">
+                <option value="Baixa">Baixa</option>
+                <option value="Média" selected>Média</option>
+                <option value="Alta">Alta</option>
+              </select>
+            </div>
+          </div>
+          <div class="mt-8 text-right">
+            <button id="saveTaskBtn" class="btn-primary">Salvar tarefa</button>
+          </div>
+          <p class="mobile-warning">
+            Dica para prints: use uma data no passado para mostrar validação de data inválida.
+          </p>
+        </div>
+
+        <!-- Tabela -->
+        <table id="tasksTable" class="mt-16">
+          <thead>
+            <tr>
+              <th>Título</th>
+              <th>Vencimento</th>
+              <th>Prioridade</th>
+              <th>Status</th>
+              <th>Ações</th>
+            </tr>
+          </thead>
+          <tbody id="tasksTbody">
+          </tbody>
+        </table>
+        <p class="text-sm mt-8">
+          Dica: você pode marcar tarefas como concluídas e usar o filtro para gerar diferentes cenários para os prints.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Estado em memória
+    let tasks = [];
+    let nextId = 1;
+    let currentUser = null;
+
+    const loginView = document.getElementById('loginView');
+    const tasksView = document.getElementById('tasksView');
+    const loginBtn = document.getElementById('loginBtn');
+    const loginMessage = document.getElementById('loginMessage');
+    const emailInput = document.getElementById('email');
+    const passwordInput = document.getElementById('password');
+    const userInfo = document.getElementById('userInfo');
+    const userEmailSpan = document.getElementById('userEmail');
+    const logoutBtn = document.getElementById('logoutBtn');
+
+    const globalMessage = document.getElementById('globalMessage');
+    const taskFormMessage = document.getElementById('taskFormMessage');
+    const taskTitleInput = document.getElementById('taskTitle');
+    const taskDueDateInput = document.getElementById('taskDueDate');
+    const taskPriorityInput = document.getElementById('taskPriority');
+    const saveTaskBtn = document.getElementById('saveTaskBtn');
+    const newTaskBtn = document.getElementById('newTaskBtn');
+    const simulateErrorBtn = document.getElementById('simulateErrorBtn');
+    const filterStatusSelect = document.getElementById('filterStatus');
+    const tasksTbody = document.getElementById('tasksTbody');
+
+    function showElement(el) {
+      el.classList.remove('hidden');
+    }
+    function hideElement(el) {
+      el.classList.add('hidden');
+    }
+
+    function showLoginMessage(msg) {
+      loginMessage.textContent = msg;
+      showElement(loginMessage);
+    }
+    function clearLoginMessage() {
+      hideElement(loginMessage);
+      loginMessage.textContent = '';
+    }
+
+    function showGlobalMessage(msg, type = 'success') {
+      globalMessage.textContent = msg;
+      globalMessage.classList.remove('message-error', 'message-success');
+      globalMessage.classList.add(type === 'success' ? 'message-success' : 'message-error');
+      showElement(globalMessage);
+    }
+    function clearGlobalMessage() {
+      hideElement(globalMessage);
+      globalMessage.textContent = '';
+    }
+
+    function showTaskFormError(msg) {
+      taskFormMessage.textContent = msg;
+      showElement(taskFormMessage);
+    }
+    function clearTaskFormError() {
+      hideElement(taskFormMessage);
+      taskFormMessage.textContent = '';
+    }
+
+    function resetTaskForm() {
+      taskTitleInput.value = '';
+      taskPriorityInput.value = 'Média';
+      taskDueDateInput.value = '';
+      clearTaskFormError();
+    }
+
+    function formatDate(dateStr) {
+      if (!dateStr) return '-';
+      const d = new Date(dateStr + 'T00:00:00');
+      if (isNaN(d)) return dateStr;
+      return d.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric' });
+    }
+
+    function renderTasks() {
+      const filter = filterStatusSelect.value;
+      tasksTbody.innerHTML = '';
+
+      let filtered = tasks;
+      if (filter === 'pendente') {
+        filtered = tasks.filter(t => t.status === 'Pendente');
+      } else if (filter === 'concluida') {
+        filtered = tasks.filter(t => t.status === 'Concluída');
+      }
+
+      if (filtered.length === 0) {
+        const tr = document.createElement('tr');
+        const td = document.createElement('td');
+        td.colSpan = 5;
+        td.textContent = 'Nenhuma tarefa encontrada.';
+        td.style.color = '#6b7280';
+        tr.appendChild(td);
+        tasksTbody.appendChild(tr);
+        return;
+      }
+
+      filtered.forEach(task => {
+        const tr = document.createElement('tr');
+
+        const tdTitle = document.createElement('td');
+        tdTitle.textContent = task.title;
+        if (task.status === 'Concluída') {
+          tdTitle.classList.add('task-concluida');
+        }
+
+        const tdDue = document.createElement('td');
+        tdDue.textContent = formatDate(task.dueDate);
+
+        const tdPriority = document.createElement('td');
+        tdPriority.textContent = task.priority;
+
+        const tdStatus = document.createElement('td');
+        const badge = document.createElement('span');
+        badge.classList.add('badge');
+        if (task.status === 'Pendente') {
+          badge.classList.add('badge-pendente');
+        } else {
+          badge.classList.add('badge-concluida');
+        }
+        badge.textContent = task.status;
+        tdStatus.appendChild(badge);
+
+        const tdActions = document.createElement('td');
+
+        const toggleBtn = document.createElement('button');
+        toggleBtn.classList.add('btn-link');
+        toggleBtn.textContent = task.status === 'Pendente' ? 'Marcar concluída' : 'Reabrir';
+        toggleBtn.onclick = () => toggleTaskStatus(task.id);
+
+        const deleteBtn = document.createElement('button');
+        deleteBtn.classList.add('btn-link');
+        deleteBtn.style.marginLeft = '6px';
+        deleteBtn.style.color = '#dc2626';
+        deleteBtn.textContent = 'Excluir';
+        deleteBtn.onclick = () => deleteTask(task.id);
+
+        tdActions.appendChild(toggleBtn);
+        tdActions.appendChild(deleteBtn);
+
+        tr.appendChild(tdTitle);
+        tr.appendChild(tdDue);
+        tr.appendChild(tdPriority);
+        tr.appendChild(tdStatus);
+        tr.appendChild(tdActions);
+
+        tasksTbody.appendChild(tr);
+      });
+    }
+
+    function toggleTaskStatus(id) {
+      const task = tasks.find(t => t.id === id);
+      if (!task) return;
+      task.status = task.status === 'Pendente' ? 'Concluída' : 'Pendente';
+      renderTasks();
+      showGlobalMessage('Status da tarefa atualizado.', 'success');
+    }
+
+    function deleteTask(id) {
+      if (!confirm('Tem certeza que deseja excluir esta tarefa?')) return;
+      tasks = tasks.filter(t => t.id !== id);
+      renderTasks();
+      showGlobalMessage('Tarefa excluída com sucesso.', 'success');
+    }
+
+    function initDemoTasks() {
+      tasks = [
+        {
+          id: nextId++,
+          title: 'Estudar Qualidade de Software',
+          dueDate: new Date(Date.now() + 3*24*60*60*1000).toISOString().substring(0,10),
+          priority: 'Alta',
+          status: 'Pendente'
+        },
+        {
+          id: nextId++,
+          title: 'Entregar trabalho de testes',
+          dueDate: new Date(Date.now() - 24*60*60*1000).toISOString().substring(0,10),
+          priority: 'Alta',
+          status: 'Concluída'
+        },
+        {
+          id: nextId++,
+          title: 'Organizar tarefas da semana',
+          dueDate: new Date(Date.now() + 7*24*60*60*1000).toISOString().substring(0,10),
+          priority: 'Média',
+          status: 'Pendente'
+        }
+      ];
+      renderTasks();
+    }
+
+    function validateDueDate(dueStr) {
+      if (!dueStr) return false;
+      const today = new Date();
+      today.setHours(0,0,0,0);
+      const due = new Date(dueStr + 'T00:00:00');
+      if (isNaN(due)) return false;
+      return due >= today;
+    }
+
+    // Handlers
+    loginBtn.addEventListener('click', () => {
+      clearLoginMessage();
+      const email = emailInput.value.trim();
+      const password = passwordInput.value.trim();
+
+      if (email === 'aluno@uni.br' && password === '123456') {
+        currentUser = email;
+        userEmailSpan.textContent = email;
+        showElement(userInfo);
+        showElement(logoutBtn);
+        hideElement(loginView);
+        showElement(tasksView);
+        initDemoTasks();
+        clearGlobalMessage();
+      } else {
+        showLoginMessage('Credenciais inválidas');
+      }
+    });
+
+    logoutBtn.addEventListener('click', () => {
+      currentUser = null;
+      hideElement(userInfo);
+      hideElement(logoutBtn);
+      showElement(loginView);
+      hideElement(tasksView);
+      clearGlobalMessage();
+      clearLoginMessage();
+      emailInput.value = '';
+      passwordInput.value = '';
+    });
+
+    saveTaskBtn.addEventListener('click', () => {
+      clearTaskFormError();
+      clearGlobalMessage();
+      const title = taskTitleInput.value.trim();
+      const due = taskDueDateInput.value;
+      const priority = taskPriorityInput.value;
+
+      if (!title) {
+        showTaskFormError('Título é obrigatório.');
+        return;
+      }
+      if (!validateDueDate(due)) {
+        showTaskFormError('Data de vencimento não pode ser no passado.');
+        return;
+      }
+
+      tasks.push({
+        id: nextId++,
+        title,
+        dueDate: due,
+        priority,
+        status: 'Pendente'
+      });
+      renderTasks();
+      resetTaskForm();
+      showGlobalMessage('Tarefa criada com sucesso.', 'success');
+    });
+
+    newTaskBtn.addEventListener('click', () => {
+      resetTaskForm();
+      showGlobalMessage('Preencha os campos para criar uma nova tarefa.', 'success');
+    });
+
+    filterStatusSelect.addEventListener('change', () => {
+      renderTasks();
+      clearGlobalMessage();
+    });
+
+    simulateErrorBtn.addEventListener('click', () => {
+      // Simula uma mensagem "quebrada" para prints de usabilidade ruim
+      globalMessage.textContent = 'Mensagem de confirmação muito longa que acaba ficando cortada em telas pequenas...';
+      globalMessage.classList.remove('message-success');
+      globalMessage.classList.add('message-error');
+      showElement(globalMessage);
+    });
+  </script>
+</body>
+</html>
